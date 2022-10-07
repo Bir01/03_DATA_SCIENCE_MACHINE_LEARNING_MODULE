@@ -1,0 +1,157 @@
+extentions:
+
+https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh
+marketplace.visualstudio.commarketplace.visualstudio.com
+Remote - SSH - Visual Studio Marketplace
+Extension for Visual Studio Code - Open any folder on a remote machine using SSH and take advantage of VS Code's full feature set.
+
+
+
+https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh-edit
+marketplace.visualstudio.commarketplace.visualstudio.com
+Remote - SSH: Editing Configuration Files - Visual Studio Marketplace
+Extension for Visual Studio Code - Edit SSH configuration files
+
+
+
+1.Keep the following files in a folder 
+
+-saved model
+-app.py file (streamlit commands)
+
+2. open your aws console
+
+3. Open EC2 Dashboard and Launch Instance (t2.micro )
+   - aws linux machine
+   - t2.micro 
+   - Key pair login- create a new key pair-default settings
+   - store your key pair on your computer
+     
+
+4. Security Group Settings
+
+   - click the check box on the new instance 
+   - Security (On the right side of details from the bottom part)
+   - Security groups-Edit inbound rules-Add rule
+
+5. Due to we want our app to be public we should set following configurations:
+
+   (Add Rule 2 times by clicking on Add Rule button)
+
+   a. Rule-1: Select "Custom TCP Rule" and set 8501 as port range and 0000 in soruce column (Anywhere IPv4)
+   b. Rule-2: Select "Custom TCP Rule" and set 8502 as port range and 0000 in soruce column (Anywhere IPv4)
+
+Together with the default rule (starting with SSH) there will be 3 rules.
+
+
+6. Set the config file 
+   - open ssh config file (Left bottom green icon) (control + t)
+      - name your host
+      - paste hostname (copy Private IPv4 addresses from ec2)
+      - copy the key pair from your computer and past in config file (identity file)
+
+7. Connect to instance 
+
+   - Connect to host (Left bottom corner green icon) 
+   - Connect to host and Select the host name (the name from config file)
+   - Select linux and continue
+
+8. Copy app files into ec2
+
+   - Create folder in ec2 ("mkdir foldername" from terminal) 
+   - change directory to new folder
+     cd foldername
+   - Copy files from desktop into new folder
+
+or 
+ 
+if you cannot copy via vscode use secure copy method:
+
+   scp -i richard_new_3.pem requirements.txt ec2-user@52.71.254.30:/home/ec2-user/streamlit6
+                  
+   (your keypair should at the same the directory with target data)
+
+or
+
+use git clone method:
+
+   push the files to git
+then on terminal:
+   $ sudo yum install git
+   $ git clone https://github.com/sxxxxxxxxxxx/streamlit.git  (before that you need to copy the htpps addres from your git accout)
+
+
+
+9. type python and python3 to see python versions ("exit()" to escape)
+
+to update python: 
+
+    sudo yum update -y 
+
+to insall python3 if there is no python3:    
+
+$ sudo yum install python3.7
+ 
+
+10. Create venv and install packages into env in ec2
+
+    python3 -m venv env_name
+
+11.activate venv(maybe pip required -----python -m pip3 install -U pip-------)
+source env_name/bin/activate
+
+
+12. install required packages inside this folder s(foldername) in ec2
+
+- pip3 install sklearn (sudo python3.7 -m pip install sklearn)
+or (sudo python3.7 -m pip install scikit-learn==1.0.2)
+- pip3 install streamlit==1.10.0  or (sudo python3.7 -m pip install streamlit)
+
+
+or
+
+pip install -r requirement.txt
+
+
+(pip list) to see the packages
+(pip freeze > requirement.txt) to create requirement file
+
+
+13. streamlit]$ streamlit run app.py
+
+You can now view your Streamlit app in your browser.
+
+  Network URL: http://172.31.28.28:8501
+  External URL: http://18.188.133.122:8501
+
+
+(When you close the git bash no matter the instance is working the app will stop. To prevent the app from this or in other words to let it work even you exit from the gitbash you should install tmux)
+
+14. "Control C" to stop running app
+
+15. install the tmux
+
+$ sudo yum install tmux
+
+16. create a new tmux session
+
+# tmux new -s st_instance
+
+17. run the app 
+
+$ streamlit run app.py
+
+Then it is ok. Even if you close the gitbash or what ever you are using for linux, the app will continue to work.
+
+You can now view your Streamlit app in your browser.                                                                                     
+Network URL: http://172.31.21.107:8501                                        
+External URL: http://3.17.161.155:8501 
+
+18. "control b" then remove your fingers from keyboard then "d"
+
+this for to detach (if you again want to attach: tmux attach -t st_instance)
+
+19. to kill the session
+tmux kill-session -t st_instance
+
+
